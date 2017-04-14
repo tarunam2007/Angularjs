@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Tarunam - example-guide-concepts-1-production</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+  <script>
+    /*But what happens to our below function which uses “this” keyword. “this” points to current instance which Tag in this case so how it will work. Answer is Angular “$scope” service (this is not a variable but service). Angular is inject at runtime*/
+    //This is dependency injection
+    //V2: Passing $rootscope which give access to app or global level object
+    function Customer($scope,$rootScope) {
+      //this.CustomerName="Tarunam";
+      //this.CustomerCode="Verma";
+      //V2: $rootScope logic: first check if variable exist if not then do 0+1 if not the value +1
+      //V2: sequence: First load app then regiter 1 st controller and increment counter then second and increment counter
+      //debugger;//V2: for chrome debugging 
+      $rootScope.counter=(($rootScope.counter || 0) + 1);
+      $scope.CustomerName = "Tarunam";
+      $scope.CustomerCode = "Verma";
+      //V2: Adding method to Controller class: define a inline function which takes name and code and persist in DB
+      $scope.Submit = function () {
+        if ($scope.CustomerName.length==0) 
+          {
+            alert("Not valid data");
+          } else {
+            alert("Valid");
+          }
+      }
+    }
+    // Finally to load angular module by instantiating the ng-app instance and loading with angular modules
+    var tarunamApp = angular.module("tarunamApp", []);
+    //<ng-app>name.controller("<Controller name in HTML file>",<Actual class name or fucniton name in JS>
+    tarunamApp.controller("tarunamCustomer", Customer);
+ 
+    //Below two fucniton automatically provided by Angular Expression {{}}
+    /*  var CustomerObject = new Customer();
+      //Bind Code: Html concept Tie UI to Obeject textbox 
+      function UiToObeject(){
+        CustomerObject.CustomerName= document.getElementById("CustomerName");
+        CustomerObject.CustomerCode= document.getElementById("CustomerCode");
+      }
+      //Bind Code: Html concept Tie Obeject UI textbox i.e prepopulate
+      function ObejectToUI(){
+        document.getElementById("CustomerName").innerHtml = CustomerObject.CustomerName;
+        document.getElementById("CustomerCode").innerHtml = CustomerObject.CustomerCode;
+      }
+      */
+  </script>
+</head>
+
+<!--• Its Global instance and all controller instances belong to this app instance. Its give facility for controllers to communicate between them.It should have all needed ng-controller -->
+
+<body ng-app="tarunamApp"> 
+<!--V2: Global scope variable counter-->
+  "How many controllers:"{{counter}}
+  <!--1. Create JS object like var CustomerObject = new Customer(); via ng-controller -->
+
+  <div id="CustScreen" ng-controller="tarunamCustomer">
+    <!--ng-model bind the property in instance like function Customer(){ this.CustomerName="Tarunam"; this.CustomerCode="Verma"; -->
+    <b>Customer Name:</b>
+    <input ng-model="CustomerName" type="Text" id="CustomerName" />
+    <br><b>Customer Code:</b>
+    <input ng-model="CustomerCode" type="Text" id="CustomerCode" />
+    <!-- THIS MORE like EL expression $ like {{}} as ng-model vlaues are like variables-->
+    <div id="divCustomerName">{{CustomerName}}</div>
+    <!--V2: Angular Autopropeorty: Mistakenly typed wrong property name which does not match our class customer then Angular dont throw error but add that property.Autoproperty: When you define property in ng-model then that automatically get created in JS Model or class irrespective whether you declared the same in model or not. -->
+    <div id="divCustomerCode1">{{CustomerCode1}}</div>
+    <BR>
+  </div>
+
+  <div id="CustScreen" ng-controller="tarunamCustomer">
+    <!--ng-model bind the property in instance like function Customer(){ this.CustomerName="Tarunam"; this.CustomerCode="Verma"; -->
+    <b>Customer Name:</b>
+    <input ng-model="CustomerName" type="Text" id="CustomerName" />
+    <br><b>Customer Code:</b>
+    <input ng-model="CustomerCode" type="Text" id="CustomerCode" />
+    <!-- THIS MORE like EL expression $ like {{}} as ng-model vlaues are like variables-->
+    <div id="divCustomerName">{{CustomerName}}</div>
+    {{CustomerCode+ ":" + CustomerName }}
+    <!-- Angular functions can be called by Angular events.  When you called changed event , first it gets to Angular DOM process and then send to HTML DOM Then HTML DOM will do the invocation and necessary updated HTML loaded.
+    Below code is native function of angular which is defined in $scope when you invoke through regular HTML , Angular framework is not able to decide the scope do not process request which then goes to HTML DOM. Since its not HTML function so HTML not able to find . See above error.
+    -->
+    <input ng-click="Submit()" type="button" name="Submit">
+    <BR>
+  </div>
+
+</body>
+
+</html>
+
+<!-- 
+Copyright 2016 Google Inc. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at http://angular.io/license
+-->
